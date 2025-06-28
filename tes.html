@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Basics - Interactive Book</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6366f1',
+                        secondary: '#8b5cf6',
+                        accent: '#ec4899',
+                        dark: '#0f172a',
+                        book: '#f5f0e5',
+                        page: '#faf8f3'
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Merriweather:wght@300;400;700&family=Open+Sans:wght@300;400;600&display=swap');
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: linear-gradient(135deg, #f0f4f8 0%, #e2e8f0 100%);
+        }
+        
+        .book-page {
+            background: #faf8f3;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1), 0 0 0 1px rgba(0, 0, 0, 0.05);
+            min-height: 80vh;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .book-page::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.05) 0%, transparent 100%);
+        }
+        
+        h1, h2, h3 {
+            font-family: 'Merriweather', serif;
+            color: #1e293b;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #6366f1 0%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .interactive-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .interactive-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .page-turn {
+            transition: transform 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        
+        .page-turn:hover {
+            transform: scale(1.05);
+        }
+        
+        .bookmark {
+            position: absolute;
+            top: -10px;
+            right: 30px;
+            width: 40px;
+            height: 70px;
+            background: linear-gradient(45deg, #ec4899, #8b5cf6);
+            clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
+            z-index: 10;
+        }
+        
+        .neuron {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .connection {
+            position: absolute;
+            background: #cbd5e1;
+            z-index: 1;
+        }
+        
+        .connection.active {
+            background: linear-gradient(90deg, #6366f1 0%, #ec4899 100%);
+        }
+        
+        .flip-card {
+            perspective: 1000px;
+        }
+        
+        .flip-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        
+        .flip-card:hover .flip-card-inner {
+            transform: rotateY(180deg);
+        }
+        
+        .flip-card-front, .flip-card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            border-radius: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+        }
+        
+        .flip-card-front {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            color: white;
+        }
+        
+        .flip-card-back {
+            background: white;
+            color: #1e293b;
+            transform: rotateY(180deg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .progress-ring__circle {
+            transition: stroke-dashoffset 0.35s;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="max-w-6xl w-full">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Interactive <span class="gradient-text">Machine Learning</span> Basics</h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">Explore fundamental concepts through interactive examples and visualizations</p>
+        </div>
+        
+        <div class="book-page rounded-xl p-6 md:p-10 mb-10 relative">
+            <div class="bookmark"></div>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <!-- Table of Contents -->
+                <div class="bg-white rounded-xl p-6 shadow-md">
+                    <h2 class="text-2xl font-bold mb-6 text-center">Table of Contents</h2>
+                    
+                    <div class="space-y-4">
+                        <div class="interactive-card bg-indigo-50 p-4 rounded-lg flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white mr-4">
+                                1
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">What is Machine Learning?</h3>
+                                <p class="text-slate-600 text-sm">Understanding the basics</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-card bg-pink-50 p-4 rounded-lg flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-accent flex items-center justify-center text-white mr-4">
+                                2
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Types of ML</h3>
+                                <p class="text-slate-600 text-sm">Supervised, Unsupervised, Reinforcement</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-card bg-purple-50 p-4 rounded-lg flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-secondary flex items-center justify-center text-white mr-4">
+                                3
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Linear Regression</h3>
+                                <p class="text-slate-600 text-sm">Predicting continuous values</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-card bg-blue-50 p-4 rounded-lg flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white mr-4">
+                                4
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Classification</h3>
+                                <p class="text-slate-600 text-sm">Logistic Regression & Decision Trees</p>
+                            </div>
+                        </div>
+                        
+                        <div class="interactive-card bg-green-50 p-4 rounded-lg flex items-start">
+                            <div class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white mr-4">
+                                5
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-lg">Neural Networks</h3>
+                                <p class="text-slate-600 text-sm">Mimicking the human brain</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Main Content -->
+                <div class="lg:col-span-2">
+                    <h2 class="text-3xl font-bold mb-2">What is <span class="gradient-text">Machine Learning</span>?</h2>
+                    <p class="text-slate-700 mb-6">
+                        Machine learning is a subset of artificial intelligence that enables systems to learn and improve from experience without explicit programming. It focuses on developing algorithms that can access data and use it to learn for themselves.
+                    </p>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+                        <h3 class="text-xl font-bold mb-4">How ML Systems Learn</h3>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div class="flip-card h-48">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <i class="fas fa-database text-4xl mb-3"></i>
+                                        <h4 class="font-bold text-lg">Data Input</h4>
+                                        <p class="text-sm mt-2">Raw information fed to the algorithm</p>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h4 class="font-bold text-lg mb-2">Data Input</h4>
+                                        <p class="text-sm">Algorithms require large datasets to identify patterns and relationships.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flip-card h-48">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <i class="fas fa-brain text-4xl mb-3"></i>
+                                        <h4 class="font-bold text-lg">Training</h4>
+                                        <p class="text-sm mt-2">Algorithm learns from the data</p>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h4 class="font-bold text-lg mb-2">Training</h4>
+                                        <p class="text-sm">The model adjusts its parameters to minimize errors during this phase.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="flip-card h-48">
+                                <div class="flip-card-inner">
+                                    <div class="flip-card-front">
+                                        <i class="fas fa-lightbulb text-4xl mb-3"></i>
+                                        <h4 class="font-bold text-lg">Prediction</h4>
+                                        <p class="text-sm mt-2">Making decisions on new data</p>
+                                    </div>
+                                    <div class="flip-card-back">
+                                        <h4 class="font-bold text-lg mb-2">Prediction</h4>
+                                        <p class="text-sm">The trained model applies learned patterns to make predictions on unseen data.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-slate-50 rounded-lg p-4">
+                            <div class="flex items-center mb-2">
+                                <div class="w-3 h-3 rounded-full bg-red-500 mr-2"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-500 mr-2"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            </div>
+                            <p class="font-medium mb-2">Try it yourself: Adjust the learning rate</p>
+                            
+                            <div class="flex items-center mb-4">
+                                <span class="text-sm mr-3">Learning Rate:</span>
+                                <input type="range" min="1" max="100" value="50" class="w-full max-w-xs" id="learningRate">
+                                <span class="text-sm ml-3" id="lrValue">0.05</span>
+                            </div>
+                            
+                            <canvas id="trainingChart" height="200"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl p-6 shadow-md">
+                            <h3 class="text-xl font-bold mb-4">Real-World Applications</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3 mt-1">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span>Recommendation systems (Netflix, Amazon)</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3 mt-1">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span>Image and speech recognition</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3 mt-1">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span>Medical diagnosis and predictions</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3 mt-1">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span>Autonomous vehicles</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <div class="w-6 h-6 rounded-full bg-green-100 flex items-center justify-center text-green-600 mr-3 mt-1">
+                                        <i class="fas fa-check text-xs"></i>
+                                    </div>
+                                    <span>Fraud detection in banking</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <div class="bg-gradient-to-br from-primary to-secondary rounded-xl p-6 text-white">
+                            <h3 class="text-xl font-bold mb-4">Key Terminologies</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <h4 class="font-bold">Features</h4>
+                                    <p class="text-sm opacity-90">Input variables used to make predictions</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Labels</h4>
+                                    <p class="text-sm opacity-90">The output variable we're trying to predict</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Model</h4>
+                                    <p class="text-sm opacity-90">The representation learned from training data</p>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold">Training</h4>
+                                    <p class="text-sm opacity-90">The process of teaching the ML algorithm</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="flex justify-between items-center mb-10">
+            <button class="page-turn bg-white rounded-full w-14 h-14 flex items-center justify-center shadow-lg">
+                <i class="fas fa-arrow-left text-xl text-primary"></i>
+            </button>
+            
+            <div class="flex space-x-2">
+                <div class="w-3 h-3 rounded-full bg-primary"></div>
+                <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+                <div class="w-3 h-3 rounded-full bg-slate-300"></div>
+            </div>
+            
+            <button class="page-turn bg-primary rounded-full w-14 h-14 flex items-center justify-center shadow-lg">
+                <i class="fas fa-arrow-right text-xl text-white"></i>
+            </button>
+        </div>
+        
+        <!-- Neural Network Visualization -->
+        <div class="book-page rounded-xl p-6 md:p-10 relative">
+            <div class="bookmark"></div>
+            <h2 class="text-3xl font-bold mb-6">Neural Network <span class="gradient-text">Playground</span></h2>
+            
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-2">
+                    <div class="bg-white rounded-xl p-6 shadow-md mb-6">
+                        <div class="relative h-96">
+                            <!-- Input Layer -->
+                            <div class="absolute left-20 top-1/2 transform -translate-y-1/2 flex flex-col space-y-8">
+                                <div class="neuron">X1</div>
+                                <div class="neuron">X2</div>
+                                <div class="neuron">X3</div>
+                            </div>
+                            
+                            <!-- Hidden Layer -->
+                            <div class="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 flex flex-col space-y-8">
+                                <div class="neuron pulse">H1</div>
+                                <div class="neuron">H2</div>
+                                <div class="neuron">H3</div>
+                                <div class="neuron">H4</div>
+                            </div>
+                            
+                            <!-- Output Layer -->
+                            <div class="absolute right-20 top-1/2 transform -translate-y-1/2">
+                                <div class="neuron bg-accent">Output</div>
+                            </div>
+                            
+                            <!-- Connections -->
+                            <div class="connection" id="conn1" style="width: 150px; height: 2px; top: 135px; left: 170px; transform: rotate(15deg);"></div>
+                            <div class="connection" id="conn2" style="width: 150px; height: 2px; top: 185px; left: 170px; transform: rotate(5deg);"></div>
+                            <div class="connection" id="conn3" style="width: 150px; height: 2px; top: 235px; left: 170px; transform: rotate(-5deg);"></div>
+                            
+                            <div class="connection" id="conn4" style="width: 150px; height: 2px; top: 135px; left: 300px; transform: rotate(-15deg);"></div>
+                            <div class="connection" id="conn5" style="width: 150px; height: 2px; top: 185px; left: 300px; transform: rotate(-5deg);"></div>
+                            <div class="connection" id="conn6" style="width: 150px; height: 2px; top: 235px; left: 300px; transform: rotate(5deg);"></div>
+                        </div>
+                        
+                        <div class="text-center mt-6">
+                            <button id="activateBtn" class="bg-primary text-white px-6 py-3 rounded-lg font-medium hover:bg-indigo-600 transition">
+                                Activate Neural Network
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div>
+                    <div class="bg-gradient-to-br from-dark to-slate-900 rounded-xl p-6 text-white mb-6">
+                        <h3 class="text-xl font-bold mb-4">How Neural Networks Work</h3>
+                        <p class="mb-4">Neural networks are inspired by the human brain and consist of interconnected nodes (neurons) organized in layers.</p>
+                        
+                        <div class="space-y-4">
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white mr-3 flex-shrink-0">
+                                    <i class="fas fa-layer-group"></i>
+                                </div>
+                                <p>Input layer receives data</p>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-secondary flex items-center justify-center text-white mr-3 flex-shrink-0">
+                                    <i class="fas fa-cogs"></i>
+                                </div>
+                                <p>Hidden layers process information</p>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="w-8 h-8 rounded-full bg-accent flex items-center justify-center text-white mr-3 flex-shrink-0">
+                                    <i class="fas fa-sign-out-alt"></i>
+                                </div>
+                                <p>Output layer produces results</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl p-6 shadow-md">
+                        <h3 class="text-xl font-bold mb-4">Try It Yourself</h3>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Input Values:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <input type="number" value="0.8" class="border border-slate-200 rounded p-2 text-center">
+                                <input type="number" value="0.2" class="border border-slate-200 rounded p-2 text-center">
+                                <input type="number" value="0.5" class="border border-slate-200 rounded p-2 text-center">
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="block text-sm font-medium mb-2">Activation Function:</label>
+                            <select class="w-full border border-slate-200 rounded p-2">
+                                <option>ReLU (Rectified Linear Unit)</option>
+                                <option>Sigmoid</option>
+                                <option>Tanh</option>
+                            </select>
+                        </div>
+                        
+                        <button class="w-full bg-primary text-white py-2.5 rounded-lg font-medium hover:bg-indigo-600 transition">
+                            Calculate Output
+                        </button>
+                        
+                        <div class="mt-4 p-3 bg-slate-50 rounded-lg text-center">
+                            <p class="text-sm text-slate-600">Output Value:</p>
+                            <p class="text-xl font-bold">0.72</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize training chart
+        const ctx = document.getElementById('trainingChart').getContext('2d');
+        const trainingChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Epoch 1', 'Epoch 2', 'Epoch 3', 'Epoch 4', 'Epoch 5', 'Epoch 6', 'Epoch 7', 'Epoch 8', 'Epoch 9', 'Epoch 10'],
+                datasets: [{
+                    label: 'Training Loss',
+                    data: [0.85, 0.62, 0.45, 0.32, 0.24, 0.18, 0.14, 0.11, 0.09, 0.07],
+                    borderColor: '#6366f1',
+                    backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                    tension: 0.4,
+                    fill: true
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Loss'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Training Epochs'
+                        }
+                    }
+                }
+            }
+        });
+        
+        // Update learning rate value
+        document.getElementById('learningRate').addEventListener('input', function() {
+            const value = this.value / 1000;
+            document.getElementById('lrValue').textContent = value.toFixed(3);
+            
+            // Update chart with new learning rate effect
+            const originalData = [0.85, 0.62, 0.45, 0.32, 0.24, 0.18, 0.14, 0.11, 0.09, 0.07];
+            const newData = originalData.map((val, index) => {
+                const adjustment = (value * 5) * (10 - index) / 10;
+                return Math.max(0.05, val - adjustment);
+            });
+            
+            trainingChart.data.datasets[0].data = newData;
+            trainingChart.update();
+        });
+        
+        // Neural network activation
+        document.getElementById('activateBtn').addEventListener('click', function() {
+            const connections = [
+                'conn1', 'conn2', 'conn3', 'conn4', 'conn5', 'conn6'
+            ];
+            
+            // Reset all connections
+            connections.forEach(conn => {
+                document.getElementById(conn).classList.remove('active');
+            });
+            
+            // Activate connections with delay
+            connections.forEach((conn, index) => {
+                setTimeout(() => {
+                    document.getElementById(conn).classList.add('active');
+                }, 200 * index);
+            });
+            
+            // Add pulse effect to output neuron
+            const outputNeuron = document.querySelector('.neuron.bg-accent');
+            outputNeuron.classList.add('pulse');
+            
+            setTimeout(() => {
+                outputNeuron.classList.remove('pulse');
+            }, 2000);
+        });
+    
+        // Add page navigation functionality
+        let currentPage = 1;
+        const totalPages = 2;
+        
+        document.querySelector('.page-turn:nth-child(3)').addEventListener('click', function() {
+            if (currentPage < totalPages) {
+                currentPage++;
+                updatePageIndicator();
+                scrollToCurrentPage();
+            }
+        });
+        
+        document.querySelector('.page-turn:first-child').addEventListener('click', function() {
+            if (currentPage > 1) {
+                currentPage--;
+                updatePageIndicator();
+                scrollToCurrentPage();
+            }
+        });
+        
+        function updatePageIndicator() {
+            const indicators = document.querySelectorAll('.flex.space-x-2 > div');
+            indicators.forEach((indicator, index) => {
+                if (index === currentPage - 1) {
+                    indicator.classList.remove('bg-slate-300');
+                    indicator.classList.add('bg-primary');
+                } else {
+                    indicator.classList.remove('bg-primary');
+                    indicator.classList.add('bg-slate-300');
+                }
+            });
+        }
+        
+        function scrollToCurrentPage() {
+            document.querySelectorAll('.book-page')[currentPage - 1].scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    
+        // Add flip card functionality for mobile
+        const flipCards = document.querySelectorAll('.flip-card');
+        flipCards.forEach(card => {
+            card.addEventListener('touchstart', function() {
+                this.classList.toggle('flipped');
+            });
+        });
+    </script>
+    </body>
+    </html>
