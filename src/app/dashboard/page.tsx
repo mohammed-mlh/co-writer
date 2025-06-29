@@ -1,11 +1,7 @@
 import { auth, currentUser } from '@clerk/nextjs/server'
 import DashboardComponent from '@/components/DashboardComponent'
+import { ensureUserExists, getUserById } from '@/server/users'
 
-export default async function DashboardPage() {
-    const { userId } = await auth()
-    if (!userId) {
-        return <div>Sign in to view this page</div>
-    }
-    
+export default async function DashboardPage() { 
     return <DashboardComponent />
 }
