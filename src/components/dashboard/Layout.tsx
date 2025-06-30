@@ -20,12 +20,10 @@ const DashboardLayout = ({
       <div className="bg-slate-900 text-white w-64 flex-shrink-0 hidden md:flex md:flex-col">
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 rounded-lg bg-indigo-600 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <i className="fas fa-robot text-white text-xl"></i>
             </div>
-            <span className="text-xl font-bold text-white">
-              Article<span className="text-indigo-400">Forge</span>
-            </span>
+            <span className="text-xl font-bold text-white">Article<span className="text-primary">Forge</span></span>
           </div>
         </div>
 
@@ -38,7 +36,7 @@ const DashboardLayout = ({
               <li className="mb-1">
                 <a
                   href="#"
-                  className="bg-indigo-600/15 border-l-[3px] border-indigo-600 flex items-center p-3 rounded-lg text-white"
+                  className="bg-primary/15 border-l-[3px] border-primary flex items-center p-3 rounded-lg text-white"
                 >
                   <i className="fas fa-home mr-3 text-slate-300"></i>
                   <span>Dashboard</span>
@@ -111,7 +109,7 @@ const DashboardLayout = ({
 
           <div className="bg-slate-800 rounded-xl p-4">
             <div className="flex items-center mb-3">
-              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-indigo-600 to-purple-600 flex items-center justify-center text-white font-bold mr-3">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold mr-3">
                 JD
               </div>
               <div>

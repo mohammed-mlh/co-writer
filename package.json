@@ -10,12 +10,15 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.23.1",
+    "@google/generative-ai": "^0.24.1",
     "@neondatabase/serverless": "^1.0.1",
     "dotenv": "^17.0.0",
     "drizzle-orm": "^0.44.2",
     "next": "15.3.4",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "svix": "^1.68.0"
   },
   "devDependencies": {
