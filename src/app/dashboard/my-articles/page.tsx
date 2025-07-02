@@ -14,6 +14,7 @@ export default async function MyArticles() {
     <div>
       <h1 className="text-2xl font-bold mb-2 text-slate-900">My Articles</h1>
       <p className="text-slate-600 mb-8">Check all your articles below.</p>
+      
       <ArticleTable articles={tableArticles} />
     </div>
   );
