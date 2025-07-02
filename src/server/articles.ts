@@ -6,7 +6,7 @@ import { eq } from "drizzle-orm"
 import { AwsPgDialect } from "drizzle-orm/aws-data-api/pg"
 
 
-export async function getArticlesForUser(userId: string) {
+export async function getArticlesByUserId(userId: string) {
     const userArticles = await db
       .select()
       .from(articles)
@@ -19,10 +19,24 @@ export async function getArticlesForUser(userId: string) {
   export async function createArticle({
     userId,
     title,
+    topic,
+    targetAudience,
+    tone,
+    wordCount,
+    keywords,
+    contentType,
+    additionalRequirements,
     content,
   }: {
     userId: string
     title: string
+    topic: string
+    targetAudience: string
+    tone: string
+    wordCount: number
+    keywords: string
+    contentType: string
+    additionalRequirements: string
     content: string
   }) {
     const inserted = await db
@@ -30,6 +44,13 @@ export async function getArticlesForUser(userId: string) {
       .values({
         userId,
         title,
+        topic,
+        targetAudience,
+        tone,
+        wordCount,
+        keywords,
+        contentType,
+        additionalRequirements,
         content,
       })
       .returning()

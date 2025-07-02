@@ -35,7 +35,7 @@ const DashboardLayout = ({
             <ul>
               <li className="mb-1">
                 <a
-                  href="#"
+                  href="/dashboard/"
                   className="bg-primary/15 border-l-[3px] border-primary flex items-center p-3 rounded-lg text-white"
                 >
                   <i className="fas fa-home mr-3 text-slate-300"></i>
@@ -44,14 +44,14 @@ const DashboardLayout = ({
               </li>
               <li className="mb-1">
                 <a
-                  href="#"
+                  href="/dashboard/my-articles"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
                 >
                   <i className="fas fa-file-alt mr-3"></i>
                   <span>My Articles</span>
                 </a>
               </li>
-              <li className="mb-1">
+              <li className="mb-1 hidden">
                 <a
                   href="#"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
@@ -62,7 +62,7 @@ const DashboardLayout = ({
               </li>
               <li className="mb-1">
                 <a
-                  href="#"
+                  href="/dashboard/analytics"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
                 >
                   <i className="fas fa-chart-line mr-3"></i>
@@ -72,14 +72,14 @@ const DashboardLayout = ({
             </ul>
           </div>
 
-          <div className="mb-8">
+          <div className="mb-8 hidden">
             <h3 className="text-xs uppercase text-slate-400 font-semibold mb-3 px-3">
               Tools
             </h3>
             <ul>
               <li className="mb-1">
                 <a
-                  href="#"
+                  href="/dashboard/seo-optimizer"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
                 >
                   <i className="fas fa-search mr-3"></i>
@@ -107,13 +107,13 @@ const DashboardLayout = ({
             </ul>
           </div>
 
-          <div className="bg-slate-800 rounded-xl p-4">
+          <div className="bg-slate-800 rounded-xl p-4 hidden">
             <div className="flex items-center mb-3">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-purple-600 flex items-center justify-center text-white font-bold mr-3">
                 JD
               </div>
               <div>
-                <h4 className="font-bold text-white">John Doe</h4>
+                <h4 className="font-bold text-white"></h4>
                 <p className="text-slate-400 text-sm">Pro Plan</p>
               </div>
             </div>

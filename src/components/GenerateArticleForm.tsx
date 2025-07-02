@@ -1,8 +1,10 @@
 'use client'
 
+import { useUser } from '@clerk/nextjs';
 import React, { useState } from 'react'
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+
 
 const GenerateArticleForm = () => {
   const [isGenerating, setIsGenerating] = useState(false)
@@ -10,6 +12,10 @@ const GenerateArticleForm = () => {
   const [wordCount, setWordCount] = useState(0)
   const [generationTime, setGenerationTime] = useState(0)
   const [error, setError] = useState('')
+  const {user} = useUser()
+
+  console.log('userId', user?.id);
+  
   
   // Form state
   const [formData, setFormData] = useState({
@@ -56,7 +62,10 @@ const GenerateArticleForm = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          userId: user?.id
+        }),
       })
 
       console.log('API response status:', response.status)
@@ -68,8 +77,8 @@ const GenerateArticleForm = () => {
         throw new Error(data.error || 'Failed to generate article')
       }
 
-      setGeneratedContent(data.content)
-      setWordCount(data.wordCount)
+      setGeneratedContent(data.article.content)
+      setWordCount(data.article.wordCount)
       setGenerationTime(Math.round((Date.now() - startTime) / 1000))
       console.log('Article generated successfully')
 
@@ -176,21 +185,23 @@ const GenerateArticleForm = () => {
 
         <div className="mb-8">
           <label className="block text-slate-700 text-sm font-medium mb-2">Content Type</label>
-          <div className="grid grid-cols-3 gap-3">
-            {contentTypes.map((type) => (
-              <button
-                key={type}
-                type="button"
-                onClick={() => handleInputChange('contentType', type)}
-                className={`py-2 border rounded-lg font-medium transition-colors ${formData.contentType === type
-                  ? 'border-primary bg-primary/10 text-primary'
-                  : 'border-slate-200 text-slate-700 hover:border-primary hover:bg-primary/10'
-                  }`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
+          <div className="flex gap-3 overflow-x-auto whitespace-nowrap [-webkit-overflow-scrolling:touch] scrollbar-hide -mx-2 px-2">
+  {contentTypes.map((type) => (
+    <button
+      key={type}
+      type="button"
+      onClick={() => handleInputChange('contentType', type)}
+      className={`min-w-[40%] py-2 px-4 border rounded-lg font-medium transition-colors ${
+        formData.contentType === type
+          ? 'border-primary bg-primary/10 text-primary'
+          : 'border-slate-200 text-slate-700 hover:border-primary hover:bg-primary/10'
+      }`}
+    >
+      {type}
+    </button>
+  ))}
+</div>
+
         </div>
 
         <div className='mb-6'>
