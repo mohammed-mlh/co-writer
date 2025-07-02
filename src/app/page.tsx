@@ -6,7 +6,6 @@ import HowItWorks from "@/components/HowItWorks";
 import Navbar from "@/components/Navbar";
 import PricingSection from "@/components/PricingSection";
 import Testimonials from "@/components/Testimonials";
-import Image from "next/image";
 
 export default function Home() {
   return (

@@ -1,5 +1,4 @@
-import { integer, text, boolean, pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
-import { use } from "react";
+import { integer, text, pgTable, serial, varchar, timestamp } from "drizzle-orm/pg-core";
 
 export const users = pgTable("users", {
   id: varchar('id', { length: 36 }).primaryKey().notNull().unique(),

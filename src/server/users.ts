@@ -3,7 +3,6 @@
 import { db } from "@/db/drizzle"
 import { users } from "@/db/schema"
 import { eq } from "drizzle-orm"
-import { AwsPgDialect } from "drizzle-orm/aws-data-api/pg"
 
 
 export async function getUser() {

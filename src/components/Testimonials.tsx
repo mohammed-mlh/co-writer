@@ -19,7 +19,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ initials, name, role,
         <p className="text-slate-600 text-sm">{role}</p>
       </div>
     </div>
-    <p className="text-slate-700 mb-4">"{content}"</p>
+    <p className="text-slate-700 mb-4">&quot;{content}&quot;</p>
     <div className="flex text-amber-400">
       <i className="fas fa-star"></i>
       <i className="fas fa-star"></i>

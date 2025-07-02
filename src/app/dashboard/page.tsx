@@ -1,6 +1,5 @@
-import { auth, currentUser } from '@clerk/nextjs/server'
+import { auth } from '@clerk/nextjs/server'
 import GenerateArticleForm from '@/components/GenerateArticleForm'
-import { ensureUserExists, getUserById } from '@/server/users'
 import { getArticlesByUserId } from '@/server/articles'
 import ArticleTable from './my-articles/ArticleTable';
 

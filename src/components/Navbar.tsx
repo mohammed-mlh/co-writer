@@ -1,5 +1,5 @@
 // src/components/Navbar.js
-import { SignedIn, SignedOut, SignInButton, SignUp, SignUpButton, UserButton } from '@clerk/nextjs';
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
 import Link from 'next/link';
 import React from 'react';
 
