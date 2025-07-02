@@ -1,6 +1,6 @@
 // src/components/Navbar.js
 import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from '@clerk/nextjs';
-import Link from 'next/link';
+
 import React from 'react';
 
 const Navbar = () => {
@@ -22,20 +22,12 @@ const Navbar = () => {
 
       <div className="flex items-center space-x-4">
         <SignedOut>
-          <div className="hidden md:flex items-center space-x-4">
-            <Link href="/sign-in" className="font-medium hover:text-primary transition">
-              Sign In
-            </Link>
-            <Link href="/sign-up" className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:opacity-80 transition shadow hover:shadow-md">
-              Get Started
-            </Link>
-          </div>
-          <div className="md:hidden flex items-center space-x-2">
+          <div className="flex items-center space-x-4">
             <SignInButton mode='modal'>
               <button className="font-medium hover:text-primary transition">Sign In</button>
             </SignInButton>
             <SignUpButton mode='modal'>
-              <button className="bg-primary text-white px-4 py-2 rounded-lg font-medium hover:opacity-80 transition shadow hover:shadow-md">
+              <button className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:opacity-80 transition shadow hover:shadow-md">
                 Get Started
               </button>
             </SignUpButton>
