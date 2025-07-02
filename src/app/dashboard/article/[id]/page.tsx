@@ -7,9 +7,10 @@ export default async function Page({
 }: {
   params: { id: string };
 }) {
-  const id = Number(params.id);
+  const { id } = await params;
+  const numId = Number(id)
 
-  if (isNaN(id)) {
+  if (isNaN(numId)) {
     return (
       <div className="max-w-3xl mx-auto py-12 text-center text-red-500">
         Invalid article ID.
@@ -17,7 +18,7 @@ export default async function Page({
     );
   }
 
-  const article = await getArticleById(id);
+  const article = await getArticleById(numId);
 
   if (!article) {
     return (
