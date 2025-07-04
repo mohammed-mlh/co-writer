@@ -36,7 +36,7 @@ const Testimonials = () => {
       initials: "JD",
       name: "John Davis",
       role: "Content Marketer",
-      content: "ArticleForge has transformed how we create content. We've cut our writing costs by 70% while increasing our blog traffic by 40% in just three months."
+      content: "CoWriter has transformed how we create content. We've cut our writing costs by 70% while increasing our blog traffic by 40% in just three months."
     },
     {
       initials: "SR",
@@ -57,7 +57,7 @@ const Testimonials = () => {
       <div className="max-w-6xl mx-auto">
         <div className="text-center max-w-2xl mx-auto mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-dark mb-4">Trusted by Thousands of Content Creators</h2>
-          <p className="text-lg text-slate-600">See what our users say about ArticleForge AI</p>
+          <p className="text-lg text-slate-600">See what our users say about CoWriter AI</p>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
