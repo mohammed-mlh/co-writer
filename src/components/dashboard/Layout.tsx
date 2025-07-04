@@ -1,5 +1,7 @@
+'use client'
+
 import { UserButton } from '@clerk/nextjs';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface User {
   id: string;
@@ -14,17 +16,35 @@ const DashboardLayout = ({
   user: User;
   children: React.ReactNode;
 }) => {
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <div className="flex h-screen overflow-hidden">
+      {/* Mobile sidebar overlay */}
+      {sidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black bg-opacity-50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="bg-slate-900 text-white w-64 flex-shrink-0 hidden md:flex md:flex-col">
+      <div className={`fixed inset-y-0 left-0 z-50 w-full md:w-64 bg-slate-900 text-white transform transition-transform duration-300 ease-in-out md:relative md:translate-x-0 ${
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      }`}>
         <div className="flex items-center justify-between p-6 border-b border-slate-700">
           <div className="flex items-center space-x-2">
             <div className="w-10 h-10 rounded-lg bg-primary flex items-center justify-center">
               <i className="fas fa-robot text-white text-xl"></i>
             </div>
-            <span className="text-xl font-bold text-white">Article<span className="text-primary">Forge</span></span>
+            <span className="text-xl font-bold text-white">Co<span className="text-primary">Writer</span></span>
           </div>
+          <button 
+            className="md:hidden text-slate-400 hover:text-white"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <i className="fas fa-times text-xl"></i>
+          </button>
         </div>
 
         <div className="p-4 flex-1 overflow-y-auto hide-scrollbar">
@@ -37,6 +57,7 @@ const DashboardLayout = ({
                 <a
                   href="/dashboard/"
                   className="bg-primary/15 border-l-[3px] border-primary flex items-center p-3 rounded-lg text-white"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-home mr-3 text-slate-300"></i>
                   <span>Dashboard</span>
@@ -46,6 +67,7 @@ const DashboardLayout = ({
                 <a
                   href="/dashboard/my-articles"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-file-alt mr-3"></i>
                   <span>My Articles</span>
@@ -55,6 +77,7 @@ const DashboardLayout = ({
                 <a
                   href="#"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-bolt mr-3"></i>
                   <span>Templates</span>
@@ -64,6 +87,7 @@ const DashboardLayout = ({
                 <a
                   href="/dashboard/analytics"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-chart-line mr-3"></i>
                   <span>Analytics</span>
@@ -81,6 +105,7 @@ const DashboardLayout = ({
                 <a
                   href="/dashboard/seo-optimizer"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-search mr-3"></i>
                   <span>SEO Optimizer</span>
@@ -90,6 +115,7 @@ const DashboardLayout = ({
                 <a
                   href="#"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-globe mr-3"></i>
                   <span>Language Translator</span>
@@ -99,6 +125,7 @@ const DashboardLayout = ({
                 <a
                   href="#"
                   className="flex items-center p-3 rounded-lg text-slate-300 hover:bg-slate-800"
+                  onClick={() => setSidebarOpen(false)}
                 >
                   <i className="fas fa-sync-alt mr-3"></i>
                   <span>Content Rewriter</span>
@@ -134,27 +161,30 @@ const DashboardLayout = ({
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      {/* Main Content - Always visible */}
+      <div className="flex-1 flex flex-col overflow-hidden w-full">
           {/* Top Navigation */}
           <header className="bg-white border-b border-slate-200">
-            <div className="flex items-center justify-between px-6 py-4">
+            <div className="flex items-center justify-between px-4 md:px-6 py-4">
               <div className="flex items-center">
-                <button className="md:hidden mr-4 text-slate-600">
+                <button 
+                  className="md:hidden mr-4 text-slate-600"
+                  onClick={() => setSidebarOpen(true)}
+                >
                   <i className="fas fa-bars text-xl"></i>
                 </button>
-                <h1 className="text-xl font-bold text-slate-900">Dashboard</h1>
+                <h1 className="text-lg md:text-xl font-bold text-slate-900">Dashboard</h1>
               </div>
 
-              <div className="flex items-center space-x-6">
-                <div className="relative">
+              <div className="flex items-center space-x-3 md:space-x-6">
+                <div className="relative hidden md:block">
                   <button className="text-slate-500 hover:text-slate-700">
                     <i className="fas fa-bell text-xl"></i>
                   </button>
                   <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
                 </div>
 
-                <div className="relative">
+                <div className="relative hidden md:block">
                   <button className="text-slate-500 hover:text-slate-700">
                     <i className="fas fa-envelope text-xl"></i>
                   </button>
@@ -162,7 +192,7 @@ const DashboardLayout = ({
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <div className="bg-orange-200 px-4 py-1 text-sm rounded-2xl">
+                  <div className="bg-orange-200 px-2 md:px-4 py-1 text-xs md:text-sm rounded-2xl">
                     {user.credits ?? 0} Credits
                   </div>
                   <UserButton />
@@ -172,7 +202,7 @@ const DashboardLayout = ({
           </header>
 
           {/* Main Content Area */}
-          <main className="flex-1 overflow-y-auto p-6 bg-slate-50">
+          <main className="flex-1 overflow-y-auto p-4 md:p-6 bg-slate-50">
             <div className="max-w-7xl mx-auto">{children}</div>
           </main>
       </div>
